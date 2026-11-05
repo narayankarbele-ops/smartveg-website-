@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SMARTVEG</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#f3f8f3;
+ color:#24352a;
+}
+header{
+ background:#176b3a;
+ color:white;
+ padding:20px;
+ text-align:center;
+}
+header h1{margin:0;font-size:30px}
+header p{margin:7px 0 0}
+nav{
+ background:#104d2b;
+ display:flex;
+ flex-wrap:wrap;
+ justify-content:center;
+}
+nav button{
+ background:transparent;
+ color:white;
+ border:0;
+ padding:14px 13px;
+ font-size:15px;
+ cursor:pointer;
+}
+nav button:hover{background:#25864e}
+.container{
+ max-width:1100px;
+ margin:auto;
+ padding:18px;
+}
+.page{display:none}
+.page.active{display:block}
+.card{
+ background:white;
+ padding:18px;
+ margin:15px 0;
+ border-radius:12px;
+ box-shadow:0 2px 8px #0001;
+}
+h2{color:#176b3a}
+h3{color:#267b47}
+input,select,textarea{
+ width:100%;
+ padding:12px;
+ margin:7px 0 13px;
+ border:1px solid #ccc;
+ border-radius:7px;
+ font-size:15px;
+}
+button.action{
+ background:#197642;
+ color:white;
+ border:0;
+ border-radius:7px;
+ padding:12px 17px;
+ margin:5px 3px;
+ cursor:pointer;
+}
+button.danger{background:#c0392b}
+button.secondary{background:#526477}
+.stat{
+ background:#e4f4e8;
+ padding:15px;
+ border-radius:10px;
+ margin:6px;
+ flex:1;
+ min-width:130px;
+}
+.stats{display:flex;flex-wrap:wrap}
+table{
+ width:100%;
+ border-collapse:collapse;
+ margin-top:12px;
+ background:white;
+}
+th,td{
+ border:1px solid #ddd;
+ padding:9px;
+ text-align:left;
+ font-size:14px;
+}
+th{background:#dcefe1}
+.tablewrap{overflow-x:auto}
+footer{
+ background:#104d2b;
+ color:white;
+ text-align:center;
+ padding:18px;
+ margin-top:30px;
+}
+.small{font-size:13px;color:#65756a}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🌱 SMARTVEG</h1>
+<p>Smart Vegetable Waste Management System</p>
+<p>Save Vegetables • Save Money • Save Nature</p>
+</header>
+
+<nav>
+<button onclick="showPage('home')">Home</button>
+<button onclick="showPage('vendor')">Vendor</button>
+<button onclick="showPage('hotel')">Hotel</button>
+<button onclick="showPage('market')">Marketplace</button>
+<button onclick="showPage('prediction')">Prediction</button>
+<button onclick="showPage('admin')">Admin</button>
+<button onclick="showPage('about')">About</button>
+</nav>
+
+<div class="container">
+
+<!-- HOME -->
+<section id="home" class="page active">
+<div class="card">
+<h2>Welcome to SMARTVEG 🌱</h2>
+<p>SMARTVEG is a smart platform designed to reduce vegetable wastage and connect vegetable vendors with hotels.</p>
+<p>Our mission is to convert vegetable waste into useful resources and improve business profitability.</p>
+<button class="action" onclick="showPage('vendor')">Vendor Login</button>
+<button class="action" onclick="showPage('hotel')">Hotel Login</button>
+<button class="action" onclick="showPage('market')">Explore Marketplace</button>
+</div>
+
+<div class="stats">
+<div class="stat"><h3>Vendor</h3><p>Manage vegetable stock</p></div>
+<div class="stat"><h3>Hotel</h3><p>Find available vegetables</p></div>
+<div class="stat"><h3>Prediction</h3><p>Estimate waste risk</p></div>
+<div class="stat"><h3>Marketplace</h3><p>Connect buyers and sellers</p></div>
+</div>
+</section>
+
+<!-- VENDOR -->
+<section id="vendor" class="page">
+<div class="card">
+<h2>Vendor Dashboard</h2>
+<h3>Vendor Login</h3>
+<input id="vendorName" placeholder="Vendor Name">
+<input id="shopName" placeholder="Shop Name">
+<button class="action" onclick="vendorLogin()">Login as Vendor</button>
+<p id="vendorStatus"></p>
+</div>
+
+<div class="card">
+<h3>Stock Management</h3>
+<input id="vVeg" placeholder="Vegetable Name">
+<input id="vQty" type="number" placeholder="Quantity in KG">
+<input id="vPrice" type="number" placeholder="Purchase Price per KG">
+<input id="vSell" type="number" placeholder="Selling Price per KG">
+<button class="action" onclick="addVendorStock()">Add Stock</button>
+<div class="tablewrap">
+<table>
+<thead><tr><th>Vegetable</th><th>Quantity</th><th>Purchase Price</th><th>Selling Price</th></tr></thead>
+<tbody id="vendorStock"></tbody>
+</table>
+</div>
+</div>
+
+<div class="card">
+<h3>Profit & Loss Analysis</h3>
+<input id="soldQty" type="number" placeholder="Quantity Sold (KG)">
+<input id="wasteQty" type="number" placeholder="Wasted Quantity (KG)">
+<input id="otherCost" type="number" placeholder="Other Costs (₹)">
+<button class="action" onclick="calculateProfit()">Calculate</button>
+<h3 id="profitResult"></h3>
+</div>
+
+<div class="card">
+<h3>Vendor Stock History</h3>
+<div class="tablewrap">
+<table>
+<thead><tr><th>Date</th><th>Vegetable</th><th>Quantity</th></tr></thead>
+<tbody id="vendorHistory"></tbody>
+</table>
+</div>
+</div>
+</section>
+
+<!-- HOTEL -->
+<section id="hotel" class="page">
+<div class="card">
+<h2>Hotel Dashboard</h2>
+<h3>Hotel Login</h3>
+<input id="hotelName" placeholder="Hotel Name">
+<input id="managerName" placeholder="Manager Name">
+<button class="action" onclick="hotelLogin()">Login as Hotel</button>
+<p id="hotelStatus"></p>
+</div>
+
+<div class="card">
+<h3>Hotel Stock Management</h3>
+<input id="hVeg" placeholder="Vegetable Name">
+<input id="hQty" type="number" placeholder="Quantity in KG">
+<button class="action" onclick="addHotelStock()">Add Hotel Stock</button>
+<div class="tablewrap">
+<table>
+<thead><tr><th>Vegetable</th><th>Quantity KG</th></tr></thead>
+<tbody id="hotelStock"></tbody>
+</table>
+</div>
+</div>
+</section>
+
+<!-- MARKETPLACE -->
+<section id="market" class="page">
+<div class="card">
+<h2>🥬 SMARTVEG Marketplace</h2>
+<p>Connect vegetable vendors with hotels.</p>
+<h3>Post Vegetable Stock – Vendor</h3>
+<input id="marketVeg" placeholder="Vegetable Name">
+<input id="marketQty" type="number" placeholder="Available Quantity KG">
+<input id="marketPrice" type="number" placeholder="Price per KG ₹">
+<button class="action" onclick="postMarketStock()">Post Vegetable Stock</button>
+</div>
+
+<div class="card">
+<h3>Available Vegetables – Hotel</h3>
+<div class="tablewrap">
+<table>
+<thead><tr><th>Vendor</th><th>Vegetable</th><th>Quantity</th><th>Price/KG</th><th>Action</th></tr></thead>
+<tbody id="marketListings"></tbody>
+</table>
+</div>
+</div>
+
+<div class="card">
+<h3>Hotel Purchase Requests</h3>
+<div class="tablewrap">
+<table>
+<thead><tr><th>Hotel</th><th>Vegetable</th><th>Quantity</th><th>Status</th></tr></thead>
+<tbody id="marketRequests"></tbody>
+</table>
+</div>
+</div>
+
+<div class="card">
+<h3>Vendor Received Requests</h3>
+<div class="tablewrap">
+<table>
+<thead><tr><th>Hotel</th><th>Vegetable</th><th>Quantity</th><th>Action</th></tr></thead>
+<tbody id="vendorRequests"></tbody>
+</table>
+</div>
+</div>
+</section>
+
+<!-- PREDICTION -->
+<section id="prediction" class="page">
+<div class="card">
+<h2>Smart Waste Prediction</h2>
+<p>Enter vegetable details to estimate the waste risk.</p>
+<input id="pVeg" placeholder="Vegetable Name">
+<input id="pQty" type="number" placeholder="Quantity in KG">
+<input id="pDays" type="number" placeholder="Storage Days">
+<select id="pStorage">
+<option value="">Select Storage Condition</option>
+<option>Refrigerator</option>
+<option>Room Temperature</option>
+<option>Cold Storage</option>
+</select>
+<button class="action" onclick="predictWaste()">Predict Waste Risk</button>
+<h3 id="predictionResult"></h3>
+<p class="small">This is a basic rule-based demo estimate, not a scientifically validated AI prediction.</p>
+</div>
+</section>
+
+<!-- ADMIN -->
+<section id="admin" class="page">
+<div class="card">
+<h2>Admin Dashboard</h2>
+<p>SMARTVEG platform overview</p>
+<div class="stats">
+<div class="stat"><h3 id="totalListings">0</h3><p>Marketplace Listings</p></div>
+<div class="stat"><h3 id="totalRequests">0</h3><p>Purchase Requests</p></div>
+<div class="stat"><h3 id="totalVendors">0</h3><p>Vendor Stock Entries</p></div>
+</div>
+<button class="action" onclick="loadAll()">Refresh Dashboard</button>
+</div>
+<div class="card">
+<h3>Marketplace Records</h3>
+<div class="tablewrap">
+<table>
+<thead><tr><th>Vendor</th><th>Vegetable</th><th>Quantity</th><th>Price</th></tr></thead>
+<tbody id="adminListings"></tbody>
+</table>
+</div>
+</div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="page">
+<div class="card">
+<h2>About SMARTVEG</h2>
+<p>SMARTVEG is a vegetable waste management initiative focused on reducing food waste in Dapoli.</p>
+<h3>Our Objectives</h3>
+<ul>
+<li>Reduce vegetable wastage.</li>
+<li>Improve stock management.</li>
+<li>Connect vendors and hotels.</li>
+<li>Estimate vegetable waste risk.</li>
+<li>Promote compost and fertilizer production from vegetable waste.</li>
+</ul>
+<h3>Our Vision</h3>
+<p>Pre-Waste Action – Take action before vegetables become waste.</p>
+</div>
+</section>
+
+</div>
+
+<footer>
+<p>🌱 SMARTVEG – Smart Vegetable Waste Management</p>
+<p>Save Food • Reduce Waste • Build a Sustainable Future</p>
+</footer>
+
+<script>
+let currentVendor="";
+let currentShop="";
+let currentHotel="";
+let currentManager="";
+
+function getData(key){
+ try{return JSON.parse(localStorage.getItem(key))||[]}
+ catch(e){return []}
+}
+function saveData(key,data){
+ localStorage.setItem(key,JSON.stringify(data));
+}
+
+function showPage(id){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ loadAll();
+}
+
+function vendorLogin(){
+ currentVendor=document.getElementById("vendorName").value.trim();
+ currentShop=document.getElementById("shopName").value.trim();
+ if(!currentVendor||!currentShop){alert("Enter Vendor Name and Shop Name");return;}
+ document.getElementById("vendorStatus").innerText=
+ "Welcome "+currentVendor+" – "+currentShop;
+ loadAll();
+}
+
+function hotelLogin(){
+ currentHotel=document.getElementById("hotelName").value.trim();
+ currentManager=document.getElementById("managerName").value.trim();
+ if(!currentHotel||!currentManager){alert("Enter Hotel Name and Manager Name");return;}
+ document.getElementById("hotelStatus").innerText=
+ "Welcome "+currentHotel+" – "+currentManager;
+ loadAll();
+}
+
+function addVendorStock(){
+ if(!currentVendor){alert("Please login as Vendor first");return;}
+ let veg=document.getElementById("vVeg").value.trim();
+ let qty=Number(document.getElementById("vQty").value);
+ let price=Number(document.getElementById("vPrice").value);
+ let sell=Number(document.getElementById("vSell").value);
+ if(!veg||qty<=0||price<0||sell<0){alert("Enter valid stock details");return;}
+ let data=getData("sv_vendor_stock");
+ data.push({vendor:currentVendor,shop:currentShop,veg,qty,price,sell,date:new Date().toLocaleDateString()});
+ saveData("sv_vendor_stock",data);
+ alert("Stock Added Successfully");
+ loadAll();
+}
+
+function addHotelStock(){
+ if(!currentHotel){alert("Please login as Hotel first");return;}
+ let veg=document.getElementById("hVeg").value.trim();
+ let qty=Number(document.getElementById("hQty").value);
+ if(!veg||qty<=0){alert("Enter valid details");return;}
+ let data=getData("sv_hotel_stock");
+ data.push({hotel:currentHotel,veg,qty});
+ saveData("sv_hotel_stock",data);
+ alert("Hotel Stock Added");
+ loadAll();
+}
+
+function calculateProfit(){
+ let sold=Number(document.getElementById("soldQty").value);
+ let wasted=Number(document.getElementById("wasteQty").value);
+ let other=Number(document.getElementById("otherCost").value);
+ let stock=getData("sv_vendor_stock");
+ let last=stock.filter(x=>x.vendor===currentVendor).slice(-1)[0];
+ if(!last){alert("Add Vendor Stock first");return;}
+ let revenue=sold*last.sell;
+ let cost=(sold+wasted)*last.price+other;
+ let result=revenue-cost;
+ document.getElementById("profitResult").innerText=
+ result>=0?"Estimated Profit: ₹"+result:"Estimated Loss: ₹"+Math.abs(result);
+}
+
+function postMarketStock(){
+ if(!currentVendor){alert("Please login as Vendor first");return;}
+ let veg=document.getElementById("marketVeg").value.trim();
+ let qty=Number(document.getElementById("marketQty").value);
+ let price=Number(document.getElementById("marketPrice").value);
+ if(!veg||qty<=0||price<0){alert("Enter valid stock details");return;}
+ let data=getData("smartveg_marketplace_listings");
+ data.push({id:Date.now(),vendor:currentVendor,shop:currentShop,veg,qty,price});
+ saveData("smartveg_marketplace_listings",data);
+ alert("Stock Posted Successfully");
+ loadAll();
+}
+
+function requestStock(id){
+ if(!currentHotel){alert("Please login as Hotel first");return;}
+ let qty=Number(prompt("Enter required quantity in KG"));
+ if(!qty||qty<=0){alert("Enter a valid quantity");return;}
+ let listings=getData("smartveg_marketplace_listings");
+ let item=listings.find(x=>x.id===id);
+ if(!item||qty>item.qty){alert("Requested quantity is not available");return;}
+ let requests=getData("smartveg_marketplace_requests");
+ requests.push({id:Date.now(),listingId:id,hotel:currentHotel,vendor:item.vendor,veg:item.veg,qty,status:"Pending"});
+ saveData("smartveg_marketplace_requests",requests);
+ alert("Purchase Request Sent");
+ loadAll();
+}
+
+function updateRequest(id,status){
+ let requests=getData("smartveg_marketplace_requests");
+ let req=requests.find(x=>x.id===id);
+ if(!req||req.status!=="Pending")return;
+ if(status==="Accepted"){
+  let listings=getData("smartveg_marketplace_listings");
+  let item=listings.find(x=>x.id===req.listingId);
+  if(!item||item.qty<req.qty){alert("Stock is no longer available");return;}
+  item.qty-=req.qty;
+  saveData("smartveg_marketplace_listings",listings);
+ }
+ req.status=status;
+ saveData("smartveg_marketplace_requests",requests);
+ alert("Request "+status);
+ loadAll();
+}
+
+function predictWaste(){
+ let veg=document.getElementById("pVeg").value.trim().toLowerCase();
+ let qty=Number(document.getElementById("pQty").value);
+ let days=Number(document.getElementById("pDays").value);
+ let storage=document.getElementById("pStorage").value;
+ if(!veg||qty<=0||days<=0||!storage){alert("Enter all details");return;}
+ let sensitive=["tomato","spinach","पालक","coriander","कोथिंबीर","cucumber","काकडी"];
+ let risk=days>=5?"HIGH":days>=3?"MEDIUM":"LOW";
+ if(sensitive.includes(veg)&&days>=3)risk="HIGH";
+ if(storage==="Refrigerator"||storage==="Cold Storage"){
+  if(risk==="HIGH")risk="MEDIUM";
+  else if(risk==="MEDIUM")risk="LOW";
+ }
+ document.getElementById("predictionResult").innerText=
+ "Vegetable: "+veg+" | Quantity: "+qty+" KG | Estimated Risk: "+risk;
+}
+
+function loadAll(){
+ let stock=getData("sv_vendor_stock");
+ document.getElementById("vendorStock").innerHTML=stock
+ .filter(x=>x.vendor===currentVendor)
+ .map(x=>`<tr><td>${esc(x.veg)}</td><td>${x.qty} KG</td><td>₹${x.price}</td><td>₹${x.sell}</td></tr>`).join("");
+
+ document.getElementById("vendorHistory").innerHTML=stock
+ .filter(x=>x.vendor===currentVendor)
+ .map(x=>`<tr><td>${esc(x.date)}</td><td>${esc(x.veg)}</td><td>${x.qty} KG</td></tr>`).join("");
+
+ let hs=getData("sv_hotel_stock");
+ document.getElementById("hotelStock").innerHTML=hs
+ .filter(x=>x.hotel===currentHotel)
+ .map(x=>`<tr><td>${esc(x.veg)}</td><td>${x.qty} KG</td></tr>`).join("");
+
+ let listings=getData("smartveg_marketplace_listings");
+ document.getElementById("marketListings").innerHTML=listings
+ .filter(x=>x.qty>0)
+ .map(x=>`<tr><td>${esc(x.vendor)}</td><td>${esc(x.veg)}</td><td>${x.qty} KG</td><td>₹${x.price}</td><td><button class="action" onclick="requestStock(${x.id})">Request</button></td></tr>`).join("");
+
+ let requests=getData("smartveg_marketplace_requests");
+ document.getElementById("marketRequests").innerHTML=requests
+ .map(x=>`<tr><td>${esc(x.hotel)}</td><td>${esc(x.veg)}</td><td>${x.qty} KG</td><td>${esc(x.status)}</td></tr>`).join("");
+
+ document.getElementById("vendorRequests").innerHTML=requests
+ .filter(x=>x.vendor===currentVendor&&x.status==="Pending")
+ .map(x=>`<tr><td>${esc(x.hotel)}</td><td>${esc(x.veg)}</td><td>${x.qty} KG</td><td><button class="action" onclick="updateRequest(${x.id},'Accepted')">Accept</button><button class="action danger" onclick="updateRequest(${x.id},'Rejected')">Reject</button></td></tr>`).join("");
+
+ document.getElementById("totalListings").innerText=listings.length;
+ document.getElementById("totalRequests").innerText=requests.length;
+ document.getElementById("totalVendors").innerText=stock.length;
+ document.getElementById("adminListings").innerHTML=listings
+ .map(x=>`<tr><td>${esc(x.vendor)}</td><td>${esc(x.veg)}</td><td>${x.qty} KG</td><td>₹${x.price}</td></tr>`).join("");
+}
+
+function esc(value){
+ return String(value).replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ }[c]));
+}
+
+loadAll();
+</script>
+
+</body>
+</html>
